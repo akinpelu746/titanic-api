@@ -1,0 +1,54 @@
+apiVersion:  apps/v1
+kind: Deployment
+metadata:
+  name: titanic-deployment
+  namespace: titanic
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: titanic-api
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: titanic-api
+    spec:
+      containers:
+      - name: titanic-api
+        env:
+        - name: MONGO_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: secret
+              key: MONGO_USERNAME
+        - name: MONGO_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: secret
+              key: MONGO_PASSWORD
+        - name: MONGO_HOSTNAME
+          valueFrom:
+              configMapKeyRef:
+                name: config
+                key: MONGO_HOSTNAME
+        - name: MONGO_PORT
+          valueFrom:
+              configMapKeyRef:
+                name: config
+                key: MONGO_PORT
+        - name: MONGO_DB
+          valueFrom:
+              configMapKeyRef:
+                name: config
+                key: MONGO_DB
+        image: daniel42233/titanic:latest
+        imagePullPolicy: "IfNotPresent"
+        ports:
+        - containerPort: 8080
+      restartPolicy: Always
+      

@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: mongo-db
+  name: mongo-deployment
+  namespace: titanic
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo-pod
+  template:
+    metadata:
+      labels:
+        app: mongo-pod
+    spec:
+      containers:
+        - env:
+          - name: MONGO_INITDB_ROOT_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: secret
+                key: MONGO_USERNAME
+          - name: MONGO_INITDB_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: secret
+                key: MONGO_PASSWORD
+          - name: MONGO_INITDB_DATABASE
+            valueFrom:
+              secretKeyRef:
+                name: secret
+                key: MONGODB_DB
+          image: mongo:latest
+          imagePullPolicy: "IfNotPresent"
+          name: mongodb
+          ports:
+            - containerPort: 27017
+          volumeMounts:
+            - mountPath: mongodbdata
+              name: db-data-pvc
+      volumes:
+      - name: db-data-pvc
+        persistentVolumeClaim:
+          claimName: db-data-pvc
+      restartPolicy: Always

@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: mongoseed-db
+  name: mongoseed-deployment
+  namespace: titanic
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongoseed-pod
+  template:
+    metadata:
+      labels:
+        app: mongoseed-pod
+    spec:
+      containers:
+        # - args:
+        #     - ./mongoseed/mongodb.sh
+        - env:
+            - name: MONGO_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: secret
+                  key: MONGO_USERNAME
+            - name: MONGO_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: secret
+                  key: MONGO_PASSWORD
+            - name: MONGO_HOSTNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: config
+                  key: MONGO_HOSTNAME
+            - name: MONGO_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: config
+                  key: MONGO_PORT
+            - name: MONGO_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: config
+                  key: MONGO_DB
+          image: mongo
+          imagePullPolicy: "IfNotPresent"
+          name: mongoseed
+          ports:
+            - containerPort: 27017
+          volumeMounts:
+            - mountPath: /mongoseed
+              name:  hostpath
+      restartPolicy: Always
+      volumes:
+        - name: hostpath
+          hostPath:
+            path: run/desktop/mnt/host/c/Users/LENOVO/Documents/Dan-container-solution
+            type: Directory
+     

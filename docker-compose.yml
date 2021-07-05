@@ -1,0 +1,69 @@
+version: '3'
+
+services:
+  flask-titanic:
+    build:
+      context: .
+    image: daniel42233/titanic:latest
+    container_name: flask-titanic-app
+    restart: unless-stopped
+    environment:
+      ENV: "prod"
+      APP_DEBUG: "False"
+      MONGODB_DB: $MONGODB_DB
+      MONGODB_USERNAME: $MONGODB_USERNAME
+      MONGODB_PASSWORD: $MONGODB_PASSWORD
+      MONGODB_HOST: $MONGODB_HOST
+      MONGODB_PORT: $MONGODB_PORT
+    ports:
+      - "8080:8080"
+      - "9229:9229"
+    depends_on:
+      - "mongodb"
+    networks:
+      - app-network
+
+
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: $MONGODB_USERNAME
+      MONGO_INITDB_ROOT_PASSWORD: $MONGODB_PASSWORD
+      MONGO_INITDB_DATABASE: $MONGODB_DB
+    networks:
+      - app-network
+ 
+    volumes:
+      - ./mongodbdata:/data/db
+      
+
+
+# This is to save the csv in the mongo db
+  mongoseed:
+    image: mongo
+    env_file: .env
+    environment: 
+      MONGO_USERNAME: $MONGODB_USERNAME
+      MONGO_PASSWORD: $MONGODB_PASSWORD
+      MONGO_DATABASE: $MONGODB_DB
+    command: ./mongoseed/mongodb.sh
+    volumes: 
+      - ./mongoseed:/mongoseed
+    networks:
+      - app-network
+    depends_on:
+      - "mongodb"
+     
+   
+
+
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mongodbdata:
