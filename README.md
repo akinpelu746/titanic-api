@@ -5,10 +5,10 @@ The endpoints was developed  using flask.
 Flask is a lightweight web application framework designed euipped only with web app development and  to get results fast.Its strength lies in its customizability and thus 
 
 
-leave room to make the app more detailed in the future.To read more about [Flask] (https://flask.palletsprojects.com/en/2.0.x/). 
+leave room to make the app more detailed in the future. To read more about [Flask](https://flask.palletsprojects.com/en/2.0.x/). 
 
 
-The endpoint specification given can be found [here] (./API.md).
+The endpoint specification given can be found [here](./API.md).
 
 
 # Project Architecture
@@ -87,11 +87,11 @@ The project structure goes thus :
 
  # Running the App Locally
     
-    Perequsite : Ensure Python is installed, if not follow this [link](https://www.ics.uci.edu/~pattis/common/handouts/pythoneclipsejava/python.html) and [here] (https://docs.mongodb.com/guides/server/install/)  for mongodb
+    Perequsite : Ensure Python is installed, if not follow this [link](https://www.ics.uci.edu/~pattis/common/handouts/pythoneclipsejava/python.html) and [here](https://docs.mongodb.com/guides/server/install/)  for mongodb
 
     - Clone the repo
 
-        git clone   
+        git clone https://github.com/akinpelu746/titanic-api.git
 
     - Install the dependecies : 
 
@@ -101,7 +101,7 @@ The project structure goes thus :
     
     -  Create a database and Collection 
 
-    - Import titanic.csv using the mongo compass [link] (https://docs.mongodb.com/compass/current/import-export/)  or mongoimport [link] (https://docs.mongodb.com/manual/reference/program/mongoimport/)
+    - Import titanic.csv using the mongo compass [link](https://docs.mongodb.com/compass/current/import-export/)  or mongoimport [link](https://docs.mongodb.com/manual/reference/program/mongoimport/)
 
 
     - Create a `.env` and update needed variables for the  MongoDB server; check `.env.example`
@@ -121,7 +121,7 @@ The project structure goes thus :
         
 The env file is still the env varaiables of the docker image ,it can be edited or  ovewrite through command line argument   by passing  -e with the argument along the  
         
-docker command . Check here to  read more [here]  (https://docs.docker.com/engine/reference/commandline/run/)
+docker command . Check here to  read more [here](https://docs.docker.com/engine/reference/commandline/run/)
         
 While in the project root directory 
 
@@ -159,7 +159,7 @@ Kubernetes:
  You can install a minuikube cluster from [here](https://minikube.sigs.k8s.io/docs/start/) 
 
 
-If you have an esiting cluster for the database , you wants to use. Configure it [here] (C:\Users\LENOVO\Dan-container-solution\k8s\app\02-config.yaml). Then move to second to the last step. 
+If you have an esiting cluster for the database , you wants to use. Configure it [here](k8s/app/02-config.yaml). Then move to second to the last step. 
 
 
 
@@ -167,34 +167,36 @@ If you have an esiting cluster for the database , you wants to use. Configure it
 **NOTE**
 Create a .env file as shown in the env.example and update `hostname,port and db varaiable` in  config.yaml [here] (k8s/app/02-config.yaml) and here
     
-Also , the username and password shoule also be updated in the secret.yaml [here] (Ck8s/Mongo/02-secret.yaml) 
+Also , the username and password shoule also be updated in the secret.yaml [here](k8s/Mongo/02-secret.yaml) 
 
-Also, the  [path] (mongoseed)   to  should be changed [here] (C:\Users\LENOVO\Documents\Dan-container-solution\k8s\Mongo\08-mongoseed-deployment.yaml) 
+Also, this  [path](mongoseed)   to  should be changed [here](k8s/Mongo/08-mongoseed-deployment.yaml) 
 
-A namespace will be created
+A namespace will be created.
 
 - To create the mongodb in kubernetes:
 
-run 
-
+``` 
 kubectl apply -f k8s/Mongo --recursive   # To create  namespace , secret,volume,pvc,svc , deployment for mongo
+```
 
 The service type uis Cluster Ip for the db so that it will not be exposed outside the cluster.
 
 confirmn it's running by  runnning
-
+```
    watch kubectl get deployment mongo-deployment
+```
 
 make sure all the pods have been started.
 
 - To create the App pods:
-
+```
  kubectl run  -f k8s/app --recursive                 # To create  namespace , secret,configmap,svc(load Balancer) , deployment for the api
-
+```
 confirmn it's running by  runnning
 
+ ```
  watch kubectl get deployment titanic-deployment
-
+```
 make sure all the pods have been started.
 
 
